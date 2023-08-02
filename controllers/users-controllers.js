@@ -55,12 +55,16 @@ const login = async (req,res) => {
         if(!existingUser || existingUser.password !== password) {
             res.status(401).send("Invalid credential, could not log you in.")
         }else{
-            res.send('Logged in successfully')
+            const responseData = {
+                message:"Logged in successfully",
+                _id:existingUser._id
+            }
+            res.send(responseData)
         }
     } catch (err) {
         res.status(500).send('Logging in failed, please try again.')
     }
-    
+  
 };
 
 exports.getUsers = getUsers;

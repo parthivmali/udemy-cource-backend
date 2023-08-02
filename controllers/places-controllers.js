@@ -19,10 +19,10 @@ const getPlaceById = async (req, res) => {
 //User Get place by user id - like : api/places/user/64c21acf1f9e5d8700a57c0c
 const getPlacesByUserId = async (req,res,next) => {
     const userId = req.params.uid;
-    console.log(userId);
+    // console.log(userId);
     try {
         const userWithPlaces = await User.findById(userId).populate('places');
-        console.log("user with place", userWithPlaces);
+        // console.log("user with place", userWithPlaces);
         if(!userWithPlaces || userWithPlaces.places.length === 0){
             res.status(404).send('could not find a place for the provided user id.'); 
             // return next(
