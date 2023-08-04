@@ -83,21 +83,22 @@ const createPlace = async (req,res,next) => {
 const updatePlace = async (req,res) => {
     const {title, description} = req.body;
     const placeId = req.params.pid;
-    
+
     try {
-        const place = await Place.findById(placeId);
-        place.title = title;
-        place.description = description;
-        const error = validationResult(req);
-        if(!error.isEmpty()) {
-            res.status(422).send('Invalid inputs passed, please check your data.')
-        }else{
-            await place.save();
-            res.status(200).send(place);
+        const updatedPlace = await Place.findByIdAndUpdate(
+          placeId,
+          { title, description },
+          { new: true }
+        );
+    
+        if (!updatedPlace) {
+          return res.status(404).send('Place not found.');
         }
-    } catch (error) {
-        res.status(500).send('Something went wrong, could not update place.')
-    }
+    
+        res.status(200).send(updatedPlace);
+      } catch (error) {
+        res.status(500).send('Something went wrong, could not update place.');
+      }
 }
 
 const deletePlace = async (req, res) => {
