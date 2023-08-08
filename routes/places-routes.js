@@ -2,7 +2,9 @@ const express = require('express');
 const { check } = require('express-validator')
 const router = express.Router();
 const placesController = require('../controllers/places-controllers');
+const checkAuth = require('../middleware/check-auth');
 
+router.use(checkAuth)
 
 router.get('/:pid', placesController.getPlaceById);
 

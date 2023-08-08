@@ -1,9 +1,7 @@
 const {validationResult} = require('express-validator');
-const HttpError = require('../models/http-error')
 const Place = require('../models/place');
 const User = require('../models/user');
 const mongoose = require('mongoose');
-const { response } = require('express');
 
 // User Get single place by id.
 const getPlaceById = async (req, res) => {
@@ -48,7 +46,7 @@ const createPlace = async (req,res,next) => {
         address,
         creator,
     });
-
+    // console.log("created Place =>",createdPlace);
     try {
         const error = validationResult(req);
         if(!error.isEmpty()) {
@@ -67,6 +65,7 @@ const createPlace = async (req,res,next) => {
                     await user.save(sess);
             
                     await sess.commitTransaction();
+                    // console.log("else inside created place =>",createdPlace);
                     res.status(201).send(createdPlace)
                 }
             } catch (error) {
@@ -94,7 +93,10 @@ const updatePlace = async (req,res) => {
         if (!updatedPlace) {
           return res.status(404).send('Place not found.');
         }
-    
+        
+        // if(updatePlace.creator.toString() !== req.userData.userId){
+        //     res.status(401).send('You are not allowed to edit this place.');    
+        // }
         res.status(200).send(updatedPlace);
       } catch (error) {
         res.status(500).send('Something went wrong, could not update place.');
@@ -112,6 +114,9 @@ const deletePlace = async (req, res) => {
         await sess.commitTransaction()
         if(!deleteUserPlace){
             res.status(404).send("Could not find place for this id.")
+        }
+        if(deleteUserPlace.creator.id !== req.userData.userId){
+            res.status(401).send('You are not allowed to delete this place.');  
         }
         res.send('Delete Successfully')
     } catch (error) {
